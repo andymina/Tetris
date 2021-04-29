@@ -9,21 +9,15 @@
 #define Piece_h
 
 #include <vector>
-#include <algorithm>
 #include <iostream>
 #include "raylib.h"
-
-// Define global vars
-#define ROWS 20
-#define COLUMNS 10
-#define WINDOW_WIDTH 400
-#define WINDOW_HEIGHT 800
-#define FPS 60
-#define BOX_SIZE WINDOW_WIDTH / COLUMNS
+#include "Global.h"
+#include "Block.h"
 
 using std::vector;
-using std::cout;
+using std::cout; using std::endl;
 
+// Enums to define which type of piece
 enum PIECE_TYPE {
   I_BLOCK, O_BLOCK,
   J_BLOCK, L_BLOCK,
@@ -34,240 +28,206 @@ enum PIECE_TYPE {
 class Piece {
 private:
   /**
-   Each piece is made up of four BOX_SIZE squares arranged in different manners.
-   The vector holds all of the top-left corners for each square since squares are drawn
-   starting from their top-left corners.
+   Each piece is made up of four <Blocks> arranged in different ways.
+   Holds all of the <Blocks> together.
   */
-  vector<Vector2> position;
+  vector<Block> blocks;
   /**
-   The fall speed of the piece in boxes per second (bps). Defaults to 1 bps.
+   Fall speed of the piece in boxes per second (bps). Defaults to 1 bps.
   */
   int fall_speed;
   /**
-   Flag variables that indicates if the piece is locked or not.
+   Indicates if the piece is locked or not.
   */
   bool locked;
+  /**
+   Type of piece
+  */
+  PIECE_TYPE type;
   /**
    The color of the piece.
   */
   Color color;
   
   /**
-   Translate piece left by 1 * BOX_SIZE.
+   Translate piece left by 1 block.
+   @return: true if the piece was moved; false otherwise.
   */
-  void left() {
-    // Create a new position to update
-    vector<Vector2> updated = this->position;
-    // Move each square and check if the coord is in bounds
-    for (int i = 0; i < updated.size(); i++) {
-      // If the new position would be OOB, return
-      if (updated[i].x - BOX_SIZE < 0)
-        return;
-      // Otherwise update the square to the new position
-      updated[i].x -= BOX_SIZE;
-    }
+  bool left() {
+    // Create a copy of the current blocks to be updated
+    vector<Block> updated = this->blocks;
     
-    // Update this->position
-    this->position = updated;
-  }
-  
-  /**
-   Translate piece right by 1 * BOX_SIZE.
-  */
-  void right() {
-    // Create a new position to update
-    vector<Vector2> updated = this->position;
-    // Move each square and check if the coord is in bounds
-    for (int i = 0; i < updated.size(); i++) {
-      // If the new position would be OOB, return
-      if (updated[i].x + BOX_SIZE > WINDOW_WIDTH - BOX_SIZE)
-        return;
-      // Otherwise update the square to the new position
-      updated[i].x += BOX_SIZE;
-    }
-    
-    // Update this->position
-    this->position = updated;
-  }
-  
-  /**
-    Translate piece down by 1 * BOX_SIZE.
-  */
-  void down() {
-    // Create a new position to update
-    vector<Vector2> updated = this->position;
-    // Move each square and check if the coord is in bounds
-    for (int i = 0; i < updated.size(); i++) {
-      // If the new position would be OOB, return
-      if (updated[i].y + BOX_SIZE > WINDOW_HEIGHT - BOX_SIZE)
-        return;
-      // Otherwise update the square to the new position
-      updated[i].y += BOX_SIZE;
-    }
-    
-    // Update this->position
-    this->position = updated;
-  }
-  
-  /**
-   Rotate the piece clockwise. Update width and height.
-  */
-  void rotateClockwise() {
-    // Create a new updated position
-    vector<Vector2> updated = this->position;
-    // Define the center of rotation
-    Vector2 center = updated[1];
-    
-    // Perform the geometric rotation
-    for (Vector2 &coord : updated) {
-      // Translate the rotated point so that center is the 'origin'
-      coord.x -= center.x;
-      coord.y -= center.y;
-      
-      // Apply the rotation rule
-      std::swap(coord.x, coord.y);
-      coord.y *= -1;
-      
-      // Translate it back
-      coord.x += center.x;
-      coord.y += center.y;
-    }
-    
-    // If the entire rotated is in bounds, update position
-    if (this->isInBounds(updated))
-      this->position = updated;
-  }
-  
-  /**
-   Rotate the piece counter-clockwise. Update width and height.
-  */
-  void rotateCounterClockwise() {
-    // Create a new updated position
-    vector<Vector2> updated = this->position;
-    // Define the center of rotation
-    Vector2 center = updated[1];
-    
-    // Perform the geometric rotation
-    for (Vector2 &coord : updated) {
-      // Translate the rotated point so that center is the 'origin'
-      coord.x -= center.x;
-      coord.y -= center.y;
-      
-      // Apply the rotation rule
-      std::swap(coord.x, coord.y);
-      coord.x *= -1;
-      
-      // Translate it back
-      coord.x += center.x;
-      coord.y += center.y;
-    }
-    
-    // If the entire rotated is in bounds, update position
-    if (this->isInBounds(updated))
-      this->position = updated;
-  }
-  
-  /**
-   Checks if the entire piece is in bounds. Used in rotation functions.
-   @param position The position to be checked
-   @return true if in bounds, false otherwise.
-  */
-  bool isInBounds(const vector<Vector2> &position) {
-    // Loop through all of the coords
-    for (Vector2 const &coord : position) {
-      // return false if coords OOB
-      if (coord.x < 0 || coord.x > WINDOW_WIDTH - BOX_SIZE)
+    // Move each block. If it can't be moved, return false.
+    for (Block &b : updated)
+      if (!b.left())
         return false;
-      if (coord.y > WINDOW_HEIGHT - BOX_SIZE)
-        return false;
-    }
-    // return true if coords are in bounds
+    
+    // Update the current group of blocks and return true
+    this->blocks = updated;
     return true;
   }
   
+  /**
+   Translate piece right by 1 block.
+   @return: true if the piece was moved; false otherwise.
+  */
+  bool right() {
+    // Create a copy of the current blocks to be updated
+    vector<Block> updated = this->blocks;
+    
+    // Move each block. If it can't be moved, return false.
+    for (Block &b : updated)
+      if (!b.right())
+        return false;
+    
+    // Update the current group of blocks and return true
+    this->blocks = updated;
+    return true;
+  }
+  
+  /**
+   Translate piece down by 1 block.
+   @return: true if the piece was moved; false otherwise.
+  */
+  bool down() {
+    // Create a copy of the current blocks to be updated
+    vector<Block> updated = this->blocks;
+    
+    // Move each block. If it can't be moved, return false.
+    for (Block &b : updated)
+      if (!b.down())
+        return false;
+    
+    // Update the current group of blocks and return true
+    this->blocks = updated;
+    return true;
+  }
+  
+  /**
+   Rotate the piece clockwise.
+   @return: true if the piece was rotated; false otherwise.
+  */
+  bool rotateClockwise() {
+    // Create a new updated position
+    vector<Block> updated = this->blocks;
+    // Define the center of rotation
+    Block center = updated[1];
+    
+    // Perform the geometric rotation on every block.
+    for (Block &b : updated)
+      if (!b.rotateCW(center))
+        return false;
+    
+    return true;
+  }
+  
+  /**
+   Rotate the piece counter-clockwise.
+   @return: true if the piece was rotated; false otherwise.
+  */
+  bool rotateCounterClockwise() {
+    // Create a new updated position
+    vector<Block> updated = this->blocks;
+    // Define the center of rotation
+    Block center = updated[1];
+    
+    // Perform the geometric rotation on every block.
+    for (Block &b : updated)
+      if (!b.rotateCCW(center))
+        return false;
+    
+    return true;
+  }
+    
 public:
   /**
    Public constructor.
    
-   @param type - The type of piece to be created. Can be any of PIECE_TYPE.
-   @param fall_speed - Set the fall speed for this piece. Defaults to 1 bps.
+   @param piece_type - The type of piece to be created. Can be any of PIECE_TYPE.
+   @param fall_speed - Set the fall speed for this piece. Defaults to 1 block per second (bps).
   */
-  Piece(PIECE_TYPE type, int fall_speed = 1) {
+  Piece(const PIECE_TYPE &piece_type, const int &fall_speed = 1) {
+    // Set the piece type
+    this->type = piece_type;
+    // Set fall speed
+    this->fall_speed = fall_speed;
+    
     // Set the starting position for each piece
-    switch (type) {
+    switch (piece_type) {
       case I_BLOCK:
-        this->position = {
-          { 5 * BOX_SIZE, 0 * BOX_SIZE },
-          { 5 * BOX_SIZE, 1 * BOX_SIZE },
-          { 5 * BOX_SIZE, 2 * BOX_SIZE },
-          { 5 * BOX_SIZE, 3 * BOX_SIZE }
-        };
         this->color = SKYBLUE;
+        this->blocks = {
+          Block({ 5, 0 }, this->color),
+          Block({ 5, 1 }, this->color),
+          Block({ 5, 2 }, this->color),
+          Block({ 5, 3 }, this->color)
+        };
         break;
         
       case O_BLOCK:
-        this->position = {
-          { 4 * BOX_SIZE, 0 * BOX_SIZE },
-          { 4 * BOX_SIZE, 1 * BOX_SIZE },
-          { 5 * BOX_SIZE, 0 * BOX_SIZE },
-          { 5 * BOX_SIZE, 1 * BOX_SIZE }
-        };
         this->color = YELLOW;
+        this->blocks = {
+          Block({ 4, 0 }, this->color),
+          Block({ 4, 1 }, this->color),
+          Block({ 5, 0 }, this->color),
+          Block({ 5, 1 }, this->color)
+        };
         break;
         
       case J_BLOCK:
-        this->position = {
-          { 5 * BOX_SIZE, 0 * BOX_SIZE },
-          { 5 * BOX_SIZE, 1 * BOX_SIZE },
-          { 5 * BOX_SIZE, 2 * BOX_SIZE },
-          { 4 * BOX_SIZE, 2 * BOX_SIZE }
-        };
         this->color = BLUE;
+        this->blocks = {
+          Block({ 5, 0 }, this->color),
+          Block({ 5, 1 }, this->color),
+          Block({ 5, 2 }, this->color),
+          Block({ 4, 2 }, this->color)
+        };
+        
+        
         break;
         
       case L_BLOCK:
-        this->position = {
-          { 4 * BOX_SIZE, 0 * BOX_SIZE },
-          { 4 * BOX_SIZE, 1 * BOX_SIZE },
-          { 4 * BOX_SIZE, 2 * BOX_SIZE },
-          { 5 * BOX_SIZE, 2 * BOX_SIZE }
-        };
         this->color = ORANGE;
+        this->blocks = {
+          Block({ 4, 0 }, this->color),
+          Block({ 4, 1 }, this->color),
+          Block({ 4, 2 }, this->color),
+          Block({ 5, 2 }, this->color)
+        };
         break;
       
       case S_BLOCK:
-        this->position = {
-          { 4 * BOX_SIZE, 0 * BOX_SIZE },
-          { 4 * BOX_SIZE, 1 * BOX_SIZE },
-          { 5 * BOX_SIZE, 1 * BOX_SIZE },
-          { 5 * BOX_SIZE, 2 * BOX_SIZE }
-        };
         this->color = GREEN;
+        this->blocks = {
+          Block({ 4, 0 }, this->color),
+          Block({ 4, 1 }, this->color),
+          Block({ 5, 1 }, this->color),
+          Block({ 5, 2 }, this->color)
+        };
         break;
       
       case Z_BLOCK:
-        this->position = {
-          { 5 * BOX_SIZE, 0 * BOX_SIZE },
-          { 5 * BOX_SIZE, 1 * BOX_SIZE },
-          { 4 * BOX_SIZE, 1 * BOX_SIZE },
-          { 4 * BOX_SIZE, 2 * BOX_SIZE }
-        };
         this->color = RED;
+        this->blocks = {
+          Block({ 5, 0 }, this->color),
+          Block({ 5, 1 }, this->color),
+          Block({ 4, 1 }, this->color),
+          Block({ 4, 2 }, this->color)
+        };
         break;
         
       case T_BLOCK:
-        this->position = {
-          { 4 * BOX_SIZE, 0 * BOX_SIZE },
-          { 3 * BOX_SIZE, 1 * BOX_SIZE },
-          { 4 * BOX_SIZE, 1 * BOX_SIZE },
-          { 5 * BOX_SIZE, 1 * BOX_SIZE }
-        };
         this->color = PURPLE;
+        this->blocks = {
+          Block({ 4, 0 }, this->color),
+          Block({ 3, 1 }, this->color),
+          Block({ 4, 1 }, this->color),
+          Block({ 5, 1 }, this->color)
+        };
         break;
     }
-    // Set fall speed
-    this->fall_speed = fall_speed;
   }
+  
   /**
    Allows the piece to be updated by user input. User can use LEFT to move left,
    RIGHT to move right, DOWN to move down, Z to rotate counter-clockwise, and
@@ -278,9 +238,11 @@ public:
     if (IsKeyPressed(KEY_LEFT)) this->left();
     if (IsKeyPressed(KEY_RIGHT)) this->right();
     if (IsKeyPressed(KEY_DOWN)) this->down();
-    // Rotations
-    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_X)) this->rotateClockwise();
-    if (IsKeyPressed(KEY_Z)) this->rotateCounterClockwise();
+    // Rotations - O_BLOCKs dont rotate
+    if (this->type != O_BLOCK && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_X)))
+      this->rotateClockwise();
+    if (this->type != O_BLOCK && IsKeyPressed(KEY_Z))
+      this->rotateCounterClockwise();
   }
   
   /**
@@ -300,9 +262,8 @@ public:
    Draws the piece on the screen at its current position.
   */
   void draw() {
-    for (auto const &coord : this->position)
-      DrawRectangle(coord.x, coord.y, BOX_SIZE, BOX_SIZE, color);
-    
+    for (Block const &b : this->blocks)
+      b.draw();
   }
 };
 
