@@ -1,12 +1,12 @@
 //
-//  Global.h
+//  Global.hpp
 //  Tetris
 //
-//  Created by Andy Mina on 4/28/21.
+//  Created by Andy Mina on 5/3/21.
 //
 
-#ifndef Global_h
-#define Global_h
+#ifndef Global_hpp
+#define Global_hpp
 
 extern int ROWS;
 extern int COLS;
@@ -15,4 +15,4 @@ extern int WINDOW_HEIGHT;
 extern int FPS;
 extern float BLOCK_SIZE;
 
-#endif /* Global_h */
+#endif /* Global_hpp */

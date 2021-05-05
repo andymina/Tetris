@@ -2,10 +2,10 @@
 //  Global.cpp
 //  Tetris
 //
-//  Created by Andy Mina on 4/28/21.
+//  Created by Andy Mina on 5/3/21.
 //
 
-#include "Global.h"
+#include "Global.hpp"
 
 // Define global vars
 int ROWS = 20;

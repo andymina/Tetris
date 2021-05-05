@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32799C38263A387100F6DF30 /* Global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32799C37263A387100F6DF30 /* Global.cpp */; };
+		320636C6263FBC7B00CECD5B /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320636C4263FBC7B00CECD5B /* Block.cpp */; };
+		320636CA263FBF1C00CECD5B /* Global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320636C8263FBF1C00CECD5B /* Global.cpp */; };
+		329EAF352642302D00354A5F /* Piece.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329EAF332642302D00354A5F /* Piece.cpp */; };
+		329EAF3A2642334400354A5F /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329EAF382642334400354A5F /* Board.cpp */; };
 		32DED87926389F2C0071B1AD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DED87826389F2C0071B1AD /* main.cpp */; };
 		32DED88226389F5F0071B1AD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32DED88126389F5F0071B1AD /* OpenGL.framework */; };
 		32DED88426389F700071B1AD /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32DED88326389F700071B1AD /* CoreVideo.framework */; };
@@ -29,11 +32,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32799C2F263A371C00F6DF30 /* Board.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Board.h; sourceTree = "<group>"; };
-		32799C35263A386100F6DF30 /* Global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Global.h; sourceTree = "<group>"; };
-		32799C37263A387100F6DF30 /* Global.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Global.cpp; sourceTree = "<group>"; };
-		32799C3A263A48ED00F6DF30 /* Block.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Block.h; sourceTree = "<group>"; };
-		328340C2263908BE007528A2 /* Piece.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Piece.h; sourceTree = "<group>"; };
+		320636C4263FBC7B00CECD5B /* Block.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
+		320636C5263FBC7B00CECD5B /* Block.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Block.hpp; sourceTree = "<group>"; };
+		320636C8263FBF1C00CECD5B /* Global.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Global.cpp; sourceTree = "<group>"; };
+		320636C9263FBF1C00CECD5B /* Global.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Global.hpp; sourceTree = "<group>"; };
+		329EAF332642302D00354A5F /* Piece.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Piece.cpp; sourceTree = "<group>"; };
+		329EAF342642302D00354A5F /* Piece.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Piece.hpp; sourceTree = "<group>"; };
+		329EAF382642334400354A5F /* Board.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Board.cpp; sourceTree = "<group>"; };
+		329EAF392642334400354A5F /* Board.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Board.hpp; sourceTree = "<group>"; };
 		32DED87526389F2C0071B1AD /* Tetris */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tetris; sourceTree = BUILT_PRODUCTS_DIR; };
 		32DED87826389F2C0071B1AD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32DED88126389F5F0071B1AD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -79,12 +85,15 @@
 		32DED87726389F2C0071B1AD /* src */ = {
 			isa = PBXGroup;
 			children = (
-				328340C2263908BE007528A2 /* Piece.h */,
 				32DED87826389F2C0071B1AD /* main.cpp */,
-				32799C2F263A371C00F6DF30 /* Board.h */,
-				32799C35263A386100F6DF30 /* Global.h */,
-				32799C37263A387100F6DF30 /* Global.cpp */,
-				32799C3A263A48ED00F6DF30 /* Block.h */,
+				320636C4263FBC7B00CECD5B /* Block.cpp */,
+				320636C5263FBC7B00CECD5B /* Block.hpp */,
+				320636C8263FBF1C00CECD5B /* Global.cpp */,
+				320636C9263FBF1C00CECD5B /* Global.hpp */,
+				329EAF332642302D00354A5F /* Piece.cpp */,
+				329EAF342642302D00354A5F /* Piece.hpp */,
+				329EAF382642334400354A5F /* Board.cpp */,
+				329EAF392642334400354A5F /* Board.hpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -157,7 +166,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32799C38263A387100F6DF30 /* Global.cpp in Sources */,
+				329EAF352642302D00354A5F /* Piece.cpp in Sources */,
+				320636CA263FBF1C00CECD5B /* Global.cpp in Sources */,
+				320636C6263FBC7B00CECD5B /* Block.cpp in Sources */,
+				329EAF3A2642334400354A5F /* Board.cpp in Sources */,
 				32DED87926389F2C0071B1AD /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
