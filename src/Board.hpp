@@ -54,6 +54,26 @@ private:
   uniform_int_distribution<int> rng;
   
   /**
+   Locks the active piece onto the board.
+  */
+  void lockPiece();
+  
+  /**
+   Sets a new random piece as the active piece and deletes the old one.
+  */
+  void newPiece();
+  
+  /**
+   If the row is fill, it will be cleared.
+   @returns - True if the row was cleared; false otherwise.
+  */
+  bool checkRow(const int &row_index);
+  
+  void clearRow(const int &row_index);
+  
+  void updateBoard();
+  
+  /**
    Draws all of the blocks on the screen.
   */
   void drawBlocks();
@@ -81,10 +101,7 @@ public:
    */
   void update();
   
-  /**
-   Locks the active piece onto the board and generates a new one.
-  */
-  void lockPiece();
+
   
   /**
    Drops the current piece by fall_speed to simulate gravity.

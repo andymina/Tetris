@@ -10,6 +10,94 @@
 // --- BEGIN PRIVATE ---
 
 /**
+ Locks the active piece onto the board and generates a new one.
+*/
+void Board::lockPiece() {
+  // Lock the active piece
+  for (Block &b : this->active->getBlocks()) {
+    // Grab the coords of the current block
+    const Vector2 &coords = b.getCoords();
+    // Grab the target block in the board
+    Block &target = this->board[coords.y][coords.x];
+    // Update the coords of the target block
+    target.setCoords(coords);
+    target.setColor(b.getColor());
+    
+    // Clear the row of new block if necessary
+    this->checkRow(coords.y);
+  }
+}
+
+/**
+ Sets a new random piece as the active piece and deletes the old one.
+*/
+void Board::newPiece() {
+  // Delete active
+  delete this->active;
+  // Get new piece
+  this->active = new Piece(this->board, PIECE_TYPE(rng(generator)));
+}
+
+/**
+ If the given row is filled, it will be cleared.
+ @returns - True if the row was cleared; false otherwise
+*/
+bool Board::checkRow(const int &row_index) {
+  // Get the row
+  vector<Block> &row = this->board[row_index];
+  
+  // Loop through the row
+  for (Block &b : row) {
+    // Get the coords of this block
+    const Vector2 &coords = b.getCoords();
+    
+    // If this block is not empty
+    if (coords.x == -1 || coords.y == -1)
+      return false;
+  }
+  
+  // Clear the row
+  this->clearRow(row_index);
+  // Update the board
+  this->updateBoard();
+  return true;
+}
+
+/**
+ Clears the given row.
+*/
+void Board::clearRow(const int &row_index) {
+  // Delete this row from the board
+  this->board.erase(this->board.begin() + row_index);
+  // Create a new empty row and insert at top
+  this->board.insert(this->board.begin(), vector<Block>(this->cols));
+}
+
+/**
+ Updates all of the blocks in the board to render at the correct position
+ starting from the bottom.
+*/
+void Board::updateBoard() {
+  // Iterate backwards through the vector (bottom up)
+  for (int i = this->board.size() - 1; i >= 0; i--) {
+    // Iterate forwards through each row (left to right)
+    for (int j = 0; j < this->board[i].size(); j++) {
+      // Get the coords of this block
+      const Vector2 &coords = this->board[i][j].getCoords();
+      // Check if the block needs to be updated
+      if (coords.x != -1 && coords.y != - 1) {
+        // Create new coords
+        Vector2 target;
+        target.x = j;
+        target.y = i;
+        // Set the new coords
+        this->board[i][j].setCoords(target);
+      }
+    }
+  }
+}
+
+/**
  Draws all of the blocks on the screen.
 */
 void Board::drawBlocks() {
@@ -76,27 +164,6 @@ void Board::update() {
 }
 
 /**
- Locks the active piece onto the board and generates a new one.
-*/
-void Board::lockPiece() {
-  // Lock the active piece
-  for (Block &b : this->active->getBlocks()) {
-    // Grab the coords of the current block
-    const Vector2 &coords = b.getCoords();
-    // Grab the target block in the board
-    Block &target = this->board[coords.y][coords.x];
-    // Update the coords of the target block
-    target.setCoords(coords);
-    target.setColor(b.getColor());
-  }
-  
-  // Delete active
-  delete this->active;
-  // Get new piece
-  this->active = new Piece(this->board, PIECE_TYPE(rng(generator)));
-}
-
-/**
  Increases the fall speed by 1 block per second (bps).
 */
 void Board::fall(int &frames) {
@@ -111,8 +178,10 @@ void Board::fall(int &frames) {
     
     // Determine if the piece failed to fall more than 3 times
     if (this->failed_falls > 3) {
-      // Lock the piece and get an new one
+      // Lock the piece
       this->lockPiece();
+      // Set a new piece
+      this->newPiece();
       // Reset counter
       this->failed_falls = 0;
     }

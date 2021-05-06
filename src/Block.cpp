@@ -76,7 +76,7 @@ bool Block::rotateCW(const Block &b, const vector<vector<Block>> &board) {
   
   // Apply the rotation rule
   std::swap(temp.x, temp.y);
-  temp.y *= -1;
+  temp.x *= -1;
   
   // Translate it back
   temp.x += b.coords.x;
@@ -90,7 +90,7 @@ bool Block::rotateCW(const Block &b, const vector<vector<Block>> &board) {
   // Get target space
   const Vector2 &target = board[temp.y][temp.y].getCoords();
   // If target space isn't empty, return false
-  if (target.x != -1)
+  if (target.x != -1 && target.y != -1)
     return false;
   // Otherwise, update and return true
   this->coords = temp;
@@ -112,7 +112,7 @@ bool Block::rotateCCW(const Block &b, const vector<vector<Block>> &board) {
   
   // Apply the rotation rule
   std::swap(temp.x, temp.y);
-  temp.x *= -1;
+  temp.y *= -1;
   
   // Translate it back
   temp.x += b.coords.x;
